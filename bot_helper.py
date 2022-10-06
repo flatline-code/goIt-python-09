@@ -1,51 +1,51 @@
 contacts = {}
 
-def main():
-    def input_error(handler):
-        def wrapper(*args):
-            try:
-                handler(*args)
-            except Exception as e:
-                error_string = e.args[0]
-                if "phone()" in error_string: 
-                    print('enter name')
-                else:
-                    print('enter name and phone')
-        return wrapper
-        
-    def stop():
-        print('Good bye!')
+def input_error(handler):
+    def wrapper(*args):
+        try:
+            return handler(*args)
+        except Exception as e:
+            error_string = e.args[0]
+            if "phone()" in error_string: 
+                print('enter name')
+            else:
+                print('enter name and phone')
+    return wrapper
 
-    def greeting():
-        print('How can I help you?')
-    
-    @input_error
-    def add(name, phone):
+def stop():
+    print('Good bye!')
+
+def greeting():
+    print('How can I help you?')
+
+@input_error
+def add(name, phone):
+    contacts[name] = phone
+    print('new contact added')
+
+@input_error
+def change(name, phone):
+    if contacts.get(name):
         contacts[name] = phone
-        print('new contact added')
+        print('contact changed')
+    else:
+        print('no such contact')
 
-    @input_error
-    def change(name, phone):
-        if contacts.get(name):
-            contacts[name] = phone
-            print('contact changed')
-        else:
-            print('no such contact')
-    
-    @input_error
-    def phone(name):
-        if contacts.get(name):
-            print(f'phone: {contacts[name]}')
-        else:
-            print('no such name')
+@input_error
+def phone(name):
+    if contacts.get(name):
+        print(f'phone: {contacts[name]}')
+    else:
+        print('no such name')
 
-    def show_all():
-        if not contacts:
-            print('nothing to show')
+def show_all():
+    if not contacts:
+        print('nothing to show')
 
-        for name, phone in contacts.items():
-            print(f'name: {name} | phone: {phone}')
-      
+    for name, phone in contacts.items():
+        print(f'name: {name} | phone: {phone}')
+
+def main():  
     commands_without_input = {
       'hello': greeting,
       'exit': stop,
@@ -53,13 +53,12 @@ def main():
       'good bye': stop,
       'show all': show_all,
     }
-    
+
     commands_with_input = {
         'add': add,
         'change': change,
         'phone': phone,
     }
-    
     
     while True:
         user_command = input('...').lower()
